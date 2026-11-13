@@ -8,6 +8,12 @@ public class ResourceView : MonoBehaviour
         transform.position = position;
     }
 
+    public void AttachTo(Transform parent)
+    {
+        transform.SetParent(parent);
+        transform.localPosition = Vector3.zero;
+    }
+
     public void Remove()
     {
         Destroy(gameObject);

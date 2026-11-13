@@ -34,8 +34,16 @@ public class ResourceRegistry : IDisposable
         
         _freeResources.Remove(resourceModel);
         _busyResources.Add(resourceModel);
+        UpdateFreeCount();
         
         return true;
+    }
+
+    public void Remove(ResourceModel resourceModel)
+    {
+        _freeResources.Remove(resourceModel);
+        _busyResources.Remove(resourceModel);
+        UpdateFreeCount();
     }
 
     public void Dispose()

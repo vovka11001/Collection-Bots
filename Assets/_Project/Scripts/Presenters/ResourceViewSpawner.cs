@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using R3;
 using Zenject;
 
-public class ResourceViewSpawner : IInitializable,IDisposable
+public class ResourceViewSpawner : IInitializable,IDisposable,IResourceViewProvider
 {
     private readonly ResourceField _resourceField;
     private readonly ResourceView.Factory _resourceViewFactory;
@@ -27,6 +27,11 @@ public class ResourceViewSpawner : IInitializable,IDisposable
         _subscritptions.Dispose();
     }
 
+    public bool TryGetView(ResourceModel resourceModel, out ResourceView view)
+    {
+        return _views.TryGetValue(resourceModel, out view);
+    }
+
     private void CreateView(ResourceModel resourceModel)
     {
         ResourceView view = _resourceViewFactory.Create();
@@ -36,7 +41,7 @@ public class ResourceViewSpawner : IInitializable,IDisposable
 
     private void RemoveView(ResourceModel resourceModel)
     {
-        if (!_views.TryGetValue(resourceModel, out var view) == false)
+        if (_views.TryGetValue(resourceModel, out var view) == false)
             return;
 
         _views.Remove(resourceModel);

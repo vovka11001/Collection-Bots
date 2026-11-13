@@ -1,19 +1,24 @@
-using Zenject;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.AI;
+using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
     private const string ResourcesGroupNmae = "Resources";
+    private const string WorkerGroupName = "Workers";
     
     [SerializeField] private GameConfig _gameConfig;
     [SerializeField] private ResourceView _resourceViewPrefab;
+    [SerializeField] private WorkerView _workerViewPrefab;
+    [SerializeField] private Transform _dropPoint;
+    [SerializeField] private Transform[] _workerSpawnPoints;
     
     public override void InstallBindings()
     {
         BindResources();
         BindConfigs();
         BindBase();
+        BindWorkers();
     }
 
     private void BindConfigs()
@@ -36,8 +41,20 @@ public class GameInstaller : MonoInstaller
 
     private void BindBase()
     {
+        Vector3[] workerSpawnPositions = _workerSpawnPoints.Select(spawnPoint => spawnPoint.position).ToArray();
+        
         Container.BindInterfacesAndSelfTo<ResourceRegistry>().AsSingle();
         Container.BindInterfacesTo<BaseScanner>().AsSingle();
-        Container.BindInterfacesTo<ResourceRegistryDebugLogger>().AsSingle();
+        Container.BindInstance(new BaseLocation(_dropPoint.position, workerSpawnPositions));
+    }
+
+    private void BindWorkers()
+    {
+        Container.BindInterfacesAndSelfTo<WorkerFleet>().AsSingle();
+        Container.BindFactory<WorkerView, WorkerView.Factory>().FromComponentInNewPrefab(_workerViewPrefab)
+            .UnderTransformGroup(WorkerGroupName);
+        Container.BindFactory<WorkerModel, WorkerView, WorkerPresenter, WorkerPresenter.Factory>();
+        Container.BindInterfacesTo<WorkerViewSpawner>().AsSingle();
+        Container.BindInterfacesTo<WorkerDispatchTest>().AsSingle();
     }
 }
