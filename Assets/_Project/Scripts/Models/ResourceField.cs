@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using R3;
 
-public class ResourceField : IDisposable
+public class ResourceField : IReadOnlyResourceField, IDisposable
 {
    private readonly List<ResourceModel> _resources = new List<ResourceModel>();
    private readonly ReactiveProperty<int> _count = new ReactiveProperty<int>();

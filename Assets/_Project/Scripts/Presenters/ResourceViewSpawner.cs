@@ -5,12 +5,12 @@ using Zenject;
 
 public class ResourceViewSpawner : IInitializable,IDisposable,IResourceViewProvider
 {
-    private readonly ResourceField _resourceField;
+    private readonly IReadOnlyResourceField _resourceField;
     private readonly ResourceView.Factory _resourceViewFactory;
     private readonly Dictionary<ResourceModel, ResourceView> _views =  new Dictionary<ResourceModel, ResourceView>();
     private readonly CompositeDisposable _subscritptions = new CompositeDisposable();
 
-    public ResourceViewSpawner(ResourceView.Factory resourceViewFactory, ResourceField resourceField)
+    public ResourceViewSpawner(ResourceView.Factory resourceViewFactory, IReadOnlyResourceField resourceField)
     {
         _resourceField = resourceField;
         _resourceViewFactory = resourceViewFactory;

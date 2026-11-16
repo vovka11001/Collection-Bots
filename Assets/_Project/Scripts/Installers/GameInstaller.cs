@@ -12,6 +12,7 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private WorkerView _workerViewPrefab;
     [SerializeField] private Transform _dropPoint;
     [SerializeField] private Transform[] _workerSpawnPoints;
+    [SerializeField] private ResourceCounterView _resourceCounterView;
     
     public override void InstallBindings()
     {
@@ -19,11 +20,18 @@ public class GameInstaller : MonoInstaller
         BindConfigs();
         BindBase();
         BindWorkers();
+        BindUserInterface();
     }
 
     private void BindConfigs()
     {
         Container.BindInstance(_gameConfig);
+    }
+
+    private void BindUserInterface()
+    {
+        Container.BindInstance(_resourceCounterView);
+        Container.BindInterfacesTo<ResourceCounterPresenter>().AsSingle();
     }
 
     private void BindResources()
@@ -46,6 +54,8 @@ public class GameInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<ResourceRegistry>().AsSingle();
         Container.BindInterfacesTo<BaseScanner>().AsSingle();
         Container.BindInstance(new BaseLocation(_dropPoint.position, workerSpawnPositions));
+        Container.BindInterfacesAndSelfTo<ResourceStorage>().AsSingle();
+        Container.BindInterfacesTo<BaseDispatcher>().AsSingle();
     }
 
     private void BindWorkers()
@@ -53,8 +63,7 @@ public class GameInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<WorkerFleet>().AsSingle();
         Container.BindFactory<WorkerView, WorkerView.Factory>().FromComponentInNewPrefab(_workerViewPrefab)
             .UnderTransformGroup(WorkerGroupName);
-        Container.BindFactory<WorkerModel, WorkerView, WorkerPresenter, WorkerPresenter.Factory>();
+        Container.BindFactory<IWorkerPresentationModel, WorkerView, WorkerPresenter, WorkerPresenter.Factory>();
         Container.BindInterfacesTo<WorkerViewSpawner>().AsSingle();
-        Container.BindInterfacesTo<WorkerDispatchTest>().AsSingle();
     }
 }

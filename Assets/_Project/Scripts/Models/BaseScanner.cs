@@ -7,11 +7,11 @@ using Zenject;
 public class BaseScanner : IInitializable, IDisposable
 {
     private readonly GameConfig _config;
-    private readonly ResourceField _resourceField;
+    private readonly IReadOnlyResourceField _resourceField;
     private readonly ResourceRegistry _resourceRegistry;
     private readonly CompositeDisposable _subscriptions = new CompositeDisposable();
 
-    public BaseScanner(GameConfig config, ResourceRegistry resourceRegistry, ResourceField resourceField)
+    public BaseScanner(GameConfig config, ResourceRegistry resourceRegistry, IReadOnlyResourceField resourceField)
     {
         _config = config;
         _resourceField = resourceField;

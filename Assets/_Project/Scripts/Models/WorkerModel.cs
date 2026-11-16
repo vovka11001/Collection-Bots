@@ -2,7 +2,7 @@ using System;
 using R3;
 using UnityEngine;
 
-public class WorkerModel : IDisposable
+public class WorkerModel : IWorkerPresentationModel, IDisposable
 {
     private readonly Vector3 _dropPoint;
     private readonly ReactiveProperty<WorkerState> _state = new ReactiveProperty<WorkerState>(WorkerState.Idle);

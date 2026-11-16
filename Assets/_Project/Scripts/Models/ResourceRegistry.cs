@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using R3;
 
-public class ResourceRegistry : IDisposable
+public class ResourceRegistry : IReadOnlyResourceRegistry,IDisposable
 {
     private readonly List<ResourceModel> _freeResources = new List<ResourceModel>();
     private readonly List<ResourceModel> _busyResources = new List<ResourceModel>();

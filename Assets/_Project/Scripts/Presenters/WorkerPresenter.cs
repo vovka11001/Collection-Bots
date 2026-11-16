@@ -4,12 +4,12 @@ using Zenject;
 
 public class WorkerPresenter : IDisposable
 {
-    private readonly WorkerModel _model;
+    private readonly IWorkerPresentationModel _model;
     private readonly WorkerView _view;
     private readonly IResourceViewProvider _resourceViewProvider;
     private readonly CompositeDisposable _subscriptions = new CompositeDisposable();
 
-    public WorkerPresenter(WorkerModel model, WorkerView view, IResourceViewProvider resourceViewProvider)
+    public WorkerPresenter(IWorkerPresentationModel model, WorkerView view, IResourceViewProvider resourceViewProvider)
     {
         _model = model;
         _view = view;
@@ -34,5 +34,5 @@ public class WorkerPresenter : IDisposable
             _view.Hold(view);
     }
     
-    public class Factory : PlaceholderFactory<WorkerModel, WorkerView, WorkerPresenter>{}
+    public class Factory : PlaceholderFactory<IWorkerPresentationModel, WorkerView, WorkerPresenter>{}
 }
