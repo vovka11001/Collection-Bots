@@ -12,6 +12,17 @@ public class ResourceStorage : IReadOnlyResourceStorage, IDisposable
         _count.Value++;
     }
 
+    public bool TrySpend(int amount)
+    {
+        if (_count.Value < amount)
+        {
+            return false;
+        }
+        
+        _count.Value -= amount;
+        return true;
+    }
+
     public void Dispose()
     {
         _count.Dispose();

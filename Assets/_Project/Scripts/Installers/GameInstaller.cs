@@ -1,37 +1,29 @@
-using System.Linq;
 using UnityEngine;
 using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
-    private const string ResourcesGroupNmae = "Resources";
+    private const string ResourcesGroupName = "Resources";
     private const string WorkerGroupName = "Workers";
+    private const string BasesGroupName = "Bases";
+    private const int LateInitializationOrder = 100;
     
     [SerializeField] private GameConfig _gameConfig;
     [SerializeField] private ResourceView _resourceViewPrefab;
     [SerializeField] private WorkerView _workerViewPrefab;
-    [SerializeField] private Transform _dropPoint;
-    [SerializeField] private Transform[] _workerSpawnPoints;
-    [SerializeField] private ResourceCounterView _resourceCounterView;
+    [SerializeField] private BaseView _baseViewPrefab;
     
     public override void InstallBindings()
     {
         BindResources();
         BindConfigs();
-        BindBase();
+        BindBases();
         BindWorkers();
-        BindUserInterface();
     }
 
     private void BindConfigs()
     {
         Container.BindInstance(_gameConfig);
-    }
-
-    private void BindUserInterface()
-    {
-        Container.BindInstance(_resourceCounterView);
-        Container.BindInterfacesTo<ResourceCounterPresenter>().AsSingle();
     }
 
     private void BindResources()
@@ -42,27 +34,33 @@ public class GameInstaller : MonoInstaller
 
         Container.BindFactory<ResourceView, ResourceView.Factory>()
             .FromComponentInNewPrefab(_resourceViewPrefab)
-            .UnderTransformGroup(ResourcesGroupNmae);
+            .UnderTransformGroup(ResourcesGroupName);
         
         Container.BindInterfacesTo<ResourceViewSpawner>().AsSingle();
-    }
-
-    private void BindBase()
-    {
-        Vector3[] workerSpawnPositions = _workerSpawnPoints.Select(spawnPoint => spawnPoint.position).ToArray();
-        
         Container.BindInterfacesAndSelfTo<ResourceRegistry>().AsSingle();
         Container.BindInterfacesTo<BaseScanner>().AsSingle();
-        Container.BindInstance(new BaseLocation(_dropPoint.position, workerSpawnPositions));
-        Container.BindInterfacesAndSelfTo<ResourceStorage>().AsSingle();
-        Container.BindInterfacesTo<BaseDispatcher>().AsSingle();
+    }
+
+    private void BindBases()
+    {
+        Container.BindFactory<Vector3, BaseModel, BaseModel.Factory>();
+        Container.BindInterfacesAndSelfTo<BaseCollection>().AsSingle();
+        Container.BindExecutionOrder<BaseCollection>(LateInitializationOrder);
+
+        Container.BindFactory<BaseView, BaseView.Factory>().FromComponentInNewPrefab(_baseViewPrefab)
+            .UnderTransformGroup(BasesGroupName);
+        
+        Container.BindFactory<IBasePresentationModel,BaseView,BasePresenter,BasePresenter.Factory>();
+        
+        Container.BindInterfacesTo<BaseViewSpawner>().AsSingle();
     }
 
     private void BindWorkers()
     {
-        Container.BindInterfacesAndSelfTo<WorkerFleet>().AsSingle();
+        Container.BindInterfacesAndSelfTo<WorkerCollection>().AsSingle();
         Container.BindFactory<WorkerView, WorkerView.Factory>().FromComponentInNewPrefab(_workerViewPrefab)
             .UnderTransformGroup(WorkerGroupName);
+        
         Container.BindFactory<IWorkerPresentationModel, WorkerView, WorkerPresenter, WorkerPresenter.Factory>();
         Container.BindInterfacesTo<WorkerViewSpawner>().AsSingle();
     }

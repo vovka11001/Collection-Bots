@@ -4,33 +4,33 @@ using UnityEngine;
 
 public class WorkerModel : IWorkerPresentationModel, IDisposable
 {
-    private readonly Vector3 _dropPoint;
     private readonly ReactiveProperty<WorkerState> _state = new ReactiveProperty<WorkerState>(WorkerState.Idle);
     private readonly ReactiveProperty<ResourceModel> _carriedResource = new ReactiveProperty<ResourceModel>();
     private readonly Subject<Vector3> _moveRequested = new Subject<Vector3>();
     private readonly Subject<ResourceModel> _delivered = new Subject<ResourceModel>();
     
     private ResourceModel _targetResource;
-
-    public WorkerModel(Vector3 homePosition, Vector3 dropPoint)
+    private Vector3 _dropPoint;
+    
+    public WorkerModel(Vector3 spawnPosition)
     {
-        _dropPoint = dropPoint;
-        HomePosition = homePosition;
+        SpawnPosition = spawnPosition;
     }
     
-    public Vector3 HomePosition { get; }
+    public Vector3 SpawnPosition { get; }
     public ReadOnlyReactiveProperty<WorkerState> State => _state;
     public ReadOnlyReactiveProperty<ResourceModel> CarriedResource => _carriedResource;
     public Observable<Vector3> MoveRequested => _moveRequested;
     public Observable<ResourceModel> Delivered => _delivered;
     public bool IsIdle => _state.Value == WorkerState.Idle;
 
-    public void Assign(ResourceModel resourceModel)
+    public void Assign(ResourceModel resourceModel,Vector3 dropPoint)
     {
         if(IsIdle == false)
             return;
         
         _targetResource = resourceModel;
+        _dropPoint = dropPoint;
         _state.Value = WorkerState.MovingToResource;
         _moveRequested.OnNext(resourceModel.Position);
     }
