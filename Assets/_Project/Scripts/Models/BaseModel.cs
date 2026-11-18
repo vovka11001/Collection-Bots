@@ -14,6 +14,7 @@ public class BaseModel : IBasePresentationModel, IDisposable
    private readonly ResourceStorage _storage = new ResourceStorage();
    private readonly WorkerFleet _fleet = new WorkerFleet();
    private readonly CompositeDisposable _subscriptions = new CompositeDisposable();
+   private readonly ReactiveProperty<Vector3?> _flagPosition = new ReactiveProperty<Vector3?>();
 
    public BaseModel(Vector3 position, GameConfig config, ResourceRegistry resourceRegistry, ResourceField resourceField
       , WorkerCollection workerCollection)
@@ -30,6 +31,7 @@ public class BaseModel : IBasePresentationModel, IDisposable
    public Vector3 DropPoint { get; }
    public IReadOnlyResourceStorage Storage => _storage;
    public ReadOnlyReactiveProperty<int> WorkerCount => _fleet.Count;
+   public ReadOnlyReactiveProperty<Vector3?> FlagPosition => _flagPosition;
 
    public void Initialize()
    {
@@ -47,11 +49,17 @@ public class BaseModel : IBasePresentationModel, IDisposable
       _fleet.Add(worker);
    }
 
+   public void PlaceFlag(Vector3 position)
+   {
+      _flagPosition.Value = position;
+   }
+
    public void Dispose()
    {
       _subscriptions.Dispose();
       _storage.Dispose();
       _fleet.Dispose();
+      _flagPosition.Dispose();
    }
 
    private bool CanDispatch(int idleWorkerCount, int freeResourceCount)

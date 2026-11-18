@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using R3;
 using Zenject;
 
-public class BaseViewSpawner : IInitializable, IDisposable
+public class BaseViewSpawner : IInitializable, IDisposable, IBaseModelProvider
 {
     private readonly BaseCollection _baseCollection;
     private readonly BasePresenter.Factory _presenterFactory;
     private readonly BaseView.Factory _viewFactory;
     private readonly List<BasePresenter> _presenters = new List<BasePresenter>();
+    private readonly Dictionary<BaseView,BaseModel> _models = new Dictionary<BaseView,BaseModel>();
     private readonly CompositeDisposable _subscriptions = new CompositeDisposable();
 
     public BaseViewSpawner(BaseCollection baseCollection, BaseView.Factory viewFactory,
@@ -22,6 +23,11 @@ public class BaseViewSpawner : IInitializable, IDisposable
     public void Initialize()
     {
         _baseCollection.Added.Subscribe(CreateBaseView).AddTo(_subscriptions);
+    }
+
+    public bool TryGetModel(BaseView view, out BaseModel model)
+    {
+        return _models.TryGetValue(view, out model);
     }
 
     public void Dispose()
@@ -39,5 +45,6 @@ public class BaseViewSpawner : IInitializable, IDisposable
         
         presenter.Initialize();
         _presenters.Add(presenter);
+        _models.Add(view, baseModel);
     }
 }

@@ -12,6 +12,7 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private ResourceView _resourceViewPrefab;
     [SerializeField] private WorkerView _workerViewPrefab;
     [SerializeField] private BaseView _baseViewPrefab;
+    [SerializeField] private PointerInputView _pointerInputView;
     
     public override void InstallBindings()
     {
@@ -19,6 +20,7 @@ public class GameInstaller : MonoInstaller
         BindConfigs();
         BindBases();
         BindWorkers();
+        BindFlagPlacement();
     }
 
     private void BindConfigs()
@@ -63,5 +65,13 @@ public class GameInstaller : MonoInstaller
         
         Container.BindFactory<IWorkerPresentationModel, WorkerView, WorkerPresenter, WorkerPresenter.Factory>();
         Container.BindInterfacesTo<WorkerViewSpawner>().AsSingle();
+    }
+
+    private void BindFlagPlacement()
+    {
+        Container.BindInstance(_pointerInputView);
+        Container.Bind<IMapBounds>().To<NavMeshMapBounds>().AsSingle();
+        Container.BindInterfacesAndSelfTo<BaseSelection>().AsSingle();
+        Container.BindInterfacesTo<FlagPlacementPresenter>().AsSingle();
     }
 }
