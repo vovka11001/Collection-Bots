@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e5b1b3f8eed847f2ae4a7b9c215fe6c, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
-  _resourceSpawnIntervalSeconds: 2
-  _maxResourcesOnField: 10
+  _resourceSpawnIntervalSeconds: 1
+  _maxResourcesOnField: 15
   _levelRadius: 20
+  _scanIntervalSeconds: 1
+  _startBasePosition: {x: 0, y: 0, z: 0}
+  _dropPointOffset: {x: 0, y: 0, z: -3.2}
+  _initialWorkerCount: 3
+  _workerCost: 3
+  _baseCost: 5
+  _minWorkersForExpansion: 5

@@ -2,20 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using R3;
+using UnityEngine;
 using Zenject;
 
 public class BaseScanner : IInitializable, IDisposable
 {
     private readonly GameConfig _config;
     private readonly IReadOnlyResourceField _resourceField;
-    private readonly ResourceRegistry _resourceRegistry;
+    private readonly BaseCollection _baseCollection;
     private readonly CompositeDisposable _subscriptions = new CompositeDisposable();
 
-    public BaseScanner(GameConfig config, ResourceRegistry resourceRegistry, IReadOnlyResourceField resourceField)
+    public BaseScanner(GameConfig config, BaseCollection baseCollection, IReadOnlyResourceField resourceField)
     {
         _config = config;
         _resourceField = resourceField;
-        _resourceRegistry = resourceRegistry;
+        _baseCollection = baseCollection;
     }
 
     public void Initialize()
@@ -34,14 +35,27 @@ public class BaseScanner : IInitializable, IDisposable
 
     private List<ResourceModel> FindUnregisteredResources()
     {
-        return _resourceField.Resources.Where(resource => _resourceRegistry.Contains(resource) == false).ToList();
+        return _resourceField.Resources.Where(resource => IsRegisteredAnyWhere(resource) == false).ToList();
+    }
+
+    private bool IsRegisteredAnyWhere(ResourceModel resourceModel)
+    {
+        return _baseCollection.Bases.Any(baseModel => baseModel.KnowsResource(resourceModel));
     }
 
     private void RegisterAll(List<ResourceModel> foundResources)
     {
         foreach (var resourceModel in foundResources)
         {
-            _resourceRegistry.Register(resourceModel);
+            BaseModel nearestBase = FindNearestBase(resourceModel.Position);
+            
+            if (nearestBase != null)
+                nearestBase.RegisterResource(resourceModel);
         }
+    }
+
+    private BaseModel FindNearestBase(Vector3 position)
+    {
+        return _baseCollection.Bases.OrderBy(basemodel => (basemodel.Position - position).sqrMagnitude).FirstOrDefault();
     }
 }

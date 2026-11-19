@@ -2,5 +2,6 @@ public enum WorkerState
 {
    Idle,
    MovingToResource,
-   CarryingToBase
+   CarryingToBase,
+   MovingToBuildSite
 }

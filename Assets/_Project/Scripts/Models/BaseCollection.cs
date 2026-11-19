@@ -10,6 +10,7 @@ public class BaseCollection : IInitializable,IDisposable
     private readonly BaseModel.Factory _baseFactory;
     private readonly List<BaseModel> _bases = new List<BaseModel>();
     private readonly Subject<BaseModel> _added = new Subject<BaseModel>();
+    private readonly CompositeDisposable _subscriptions = new CompositeDisposable();
 
     public BaseCollection(GameConfig config, BaseModel.Factory baseFactory)
     {
@@ -30,6 +31,8 @@ public class BaseCollection : IInitializable,IDisposable
 
     public void Dispose()
     {
+        _subscriptions.Dispose();
+        
         foreach (var baseModel in _bases)
             baseModel.Dispose();
         
@@ -42,8 +45,17 @@ public class BaseCollection : IInitializable,IDisposable
         
         baseModel.Initialize();
         _bases.Add(baseModel);
+        
+        baseModel.ExpansionRequest.Subscribe(BuildExpansionBase).AddTo(_subscriptions);
+        
         _added.OnNext(baseModel);
         
         return baseModel;
+    }
+
+    private void BuildExpansionBase(BaseExpansionRequest request)
+    {
+        BaseModel newBase = CreateBase(request.Position);
+        newBase.AddWorker(request.Builder);
     }
 }

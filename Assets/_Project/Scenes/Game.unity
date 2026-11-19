@@ -218,6 +218,7 @@ MonoBehaviour:
   _resourceViewPrefab: {fileID: -3343794349169644926, guid: 4f6f8438ee4d441ddbc1196e2701723c, type: 3}
   _workerViewPrefab: {fileID: -632511641344681135, guid: ef333b9b428f343c89462f760abc881a, type: 3}
   _baseViewPrefab: {fileID: 3135836845797263894, guid: 137c0a34734aa4c70b70e17b1f45d057, type: 3}
+  _pointerInputView: {fileID: 1063519609}
 --- !u!4 &674586726
 Transform:
   m_ObjectHideFlags: 0
@@ -525,6 +526,54 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 55, y: 0, z: 0}
+--- !u!1 &1063519608
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1063519610}
+  - component: {fileID: 1063519609}
+  m_Layer: 0
+  m_Name: PointerInput
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1063519609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063519608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e2e3237cb66e43c1987672de061ba28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 963194227}
+  _clickMask:
+    serializedVersion: 2
+    m_Bits: 192
+--- !u!4 &1063519610
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063519608}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.9241915, y: 1.7905841, z: -6.4828734}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1804068444
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,3 +648,4 @@ SceneRoots:
   - {fileID: 618723713}
   - {fileID: 1804068446}
   - {fileID: 674586726}
+  - {fileID: 1063519610}

@@ -11,6 +11,8 @@ public class GameConfig : ScriptableObject
     [SerializeField] private Vector3 _dropPointOffset = new Vector3(0f, 0f, -3.2f);
     [SerializeField] private int _initialWorkerCount = 3;
     [SerializeField] private int _workerCost = 3;
+    [SerializeField] private int _baseCost = 5;
+    [SerializeField] private int _minWorkersForExpansion = 5;
     
     public float ResourceSpawnIntervalSeconds => _resourceSpawnIntervalSeconds;
     public int MaxResourcesOnField => _maxResourcesOnField;
@@ -20,4 +22,6 @@ public class GameConfig : ScriptableObject
     public Vector3 DropPointOffset => _dropPointOffset;
     public int InitialWorkerCount => _initialWorkerCount;
     public int WorkerCost => _workerCost;
+    public int BaseCost => _baseCost;
+    public int MinWorkersForExpansion => _minWorkersForExpansion;
 }

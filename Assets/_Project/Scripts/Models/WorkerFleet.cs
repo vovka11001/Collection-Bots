@@ -5,6 +5,8 @@ using R3;
 
 public class WorkerFleet : IDisposable
 {
+   private const int InitialValueCount = 1;
+   
    private readonly List<WorkerModel> _workers = new List<WorkerModel>();
    private readonly Dictionary<WorkerModel,IDisposable> _workerSubscriptions = new Dictionary<WorkerModel,IDisposable>();
    private readonly ReactiveProperty<int> _count = new ReactiveProperty<int>();
@@ -19,8 +21,9 @@ public class WorkerFleet : IDisposable
    public void Add(WorkerModel worker)
    {
       _workers.Add(worker);
-      _count.Value =  _workers.Count;
       _workerSubscriptions[worker] = SubscribeToWorker(worker);
+      _count.Value =  _workers.Count;
+      UpdateIdleCount();
    }
 
    public void Remove(WorkerModel worker)
@@ -54,7 +57,7 @@ public class WorkerFleet : IDisposable
    {
       CompositeDisposable subscriptions = new CompositeDisposable();
       
-      worker.State.Subscribe(_ => UpdateIdleCount()).AddTo(subscriptions);
+      worker.State.Skip(InitialValueCount).Subscribe(_ => UpdateIdleCount()).AddTo(subscriptions);
       worker.Delivered.Subscribe(_delivered.OnNext).AddTo(subscriptions);
       
       return subscriptions;

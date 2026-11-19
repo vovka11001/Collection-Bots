@@ -8,6 +8,7 @@ public class WorkerModel : IWorkerPresentationModel, IDisposable
     private readonly ReactiveProperty<ResourceModel> _carriedResource = new ReactiveProperty<ResourceModel>();
     private readonly Subject<Vector3> _moveRequested = new Subject<Vector3>();
     private readonly Subject<ResourceModel> _delivered = new Subject<ResourceModel>();
+    private readonly Subject<Unit> _buildSiteReached = new Subject<Unit>();
     
     private ResourceModel _targetResource;
     private Vector3 _dropPoint;
@@ -22,6 +23,7 @@ public class WorkerModel : IWorkerPresentationModel, IDisposable
     public ReadOnlyReactiveProperty<ResourceModel> CarriedResource => _carriedResource;
     public Observable<Vector3> MoveRequested => _moveRequested;
     public Observable<ResourceModel> Delivered => _delivered;
+    public Observable<Unit> BuildSiteReached => _buildSiteReached;
     public bool IsIdle => _state.Value == WorkerState.Idle;
 
     public void Assign(ResourceModel resourceModel,Vector3 dropPoint)
@@ -35,6 +37,23 @@ public class WorkerModel : IWorkerPresentationModel, IDisposable
         _moveRequested.OnNext(resourceModel.Position);
     }
 
+    public void AssignBuild(Vector3 destination)
+    {
+        if (IsIdle == false)
+            return;
+        
+        _state.Value = WorkerState.MovingToBuildSite;
+        _moveRequested.OnNext(destination);
+    }
+
+    public void RedirectBuild(Vector3 destination)
+    {
+        if (_state.Value != WorkerState.MovingToBuildSite)
+            return;
+        
+        _moveRequested.OnNext(destination);
+    }
+
     public void ReportArrived()
     {
         switch (_state.Value)
@@ -46,6 +65,10 @@ public class WorkerModel : IWorkerPresentationModel, IDisposable
             case WorkerState.CarryingToBase:
                 DeliverCarried();
                 break;
+            
+            case WorkerState.MovingToBuildSite:
+                ReachBuildSite();
+                break;
         }
     }
 
@@ -55,6 +78,13 @@ public class WorkerModel : IWorkerPresentationModel, IDisposable
         _delivered.Dispose();
         _carriedResource.Dispose();
         _state.Dispose();
+        _buildSiteReached.Dispose();
+    }
+
+    private void ReachBuildSite()
+    {
+        _buildSiteReached.OnNext(Unit.Default);
+        _state.Value = WorkerState.Idle;
     }
 
     private void PickUpTarget()

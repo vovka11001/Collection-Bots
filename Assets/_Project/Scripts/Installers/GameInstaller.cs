@@ -39,7 +39,6 @@ public class GameInstaller : MonoInstaller
             .UnderTransformGroup(ResourcesGroupName);
         
         Container.BindInterfacesTo<ResourceViewSpawner>().AsSingle();
-        Container.BindInterfacesAndSelfTo<ResourceRegistry>().AsSingle();
         Container.BindInterfacesTo<BaseScanner>().AsSingle();
     }
 
